@@ -1,0 +1,6 @@
+secrets.py
+assets
+.git
+.idea
+__pycache__
+*.pyc
