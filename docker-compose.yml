@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  postgres:
+    environment:
+      POSTGRES_PASSWORD: jfFEd84HWFj
+    image: postgres:latest
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    logging:
+      options:
+        max-size: 1m
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    environment:
+      POSTGRES_PASSWORD: jfFEd84HWFj
+    ports:
+      - "8003:8000"
+    depends_on:
+      - postgres
+
+volumes:
+  pg_data:
