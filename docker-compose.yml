@@ -1,6 +1,21 @@
 version: '3'
 
 services:
+  web:
+    build: .
+    command:  bash -c "python manage.py migrate && python manage.py loaddata fixtures/*.json && python cron_script.py && python manage.py runserver 0.0.0.0:8000"
+#    command:  bash -c "python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/code
+    environment:
+      POSTGRES_PASSWORD: jfFEd84HWFj
+      EB_BEARER: SAFEXY2AQJ4Y2DAHFG3A
+      DEBUG: 'True'
+    ports:
+      - "8003:8000"
+    depends_on:
+      - postgres
+
   postgres:
     environment:
       POSTGRES_PASSWORD: jfFEd84HWFj
@@ -10,17 +25,6 @@ services:
     logging:
       options:
         max-size: 1m
-  web:
-    build: .
-    command: python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - .:/code
-    environment:
-      POSTGRES_PASSWORD: jfFEd84HWFj
-    ports:
-      - "8003:8000"
-    depends_on:
-      - postgres
 
 volumes:
   pg_data:
