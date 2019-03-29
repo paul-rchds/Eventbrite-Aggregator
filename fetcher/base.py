@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from utils.errors import APIError
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('django')
 
 
 class Fetcher:

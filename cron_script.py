@@ -9,12 +9,12 @@ from api.serializers import EventSerializer
 from fetcher.fetchers import EventsFetcher
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('django')
 
 
 def fetch_events():
 
-    logging.warning('Starting cron script...')
+    logger.info('Starting cron script... This may take some time...')
 
     for location in Location.objects.all():
         events = EventsFetcher.get_items(location)
@@ -27,7 +27,7 @@ def fetch_events():
             else:
                 logger.error(serializer.errors)
 
-    logging.warning('Finished cron script...')
+    logger.info('Finished cron script...')
 
 
 if __name__ == '__main__':

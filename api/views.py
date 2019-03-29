@@ -1,4 +1,3 @@
-import logging
 from itertools import groupby
 from django.db.models import Count
 from django.http import Http404
@@ -9,8 +8,6 @@ from rest_framework.views import APIView
 from api.models import Event, Organizer, Venue
 from api.serializers import EventSerializer
 from utils.sql import execute_sql
-
-logger_sql = logging.getLogger('sql')
 
 
 class EventList(generics.ListAPIView):

@@ -3,7 +3,7 @@ from api.serializers import VenueSerializer, OrganizerSerializer, CategorySerial
 from fetcher.base import ItemFetcher, ItemsFetcher
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('django')
 
 
 class OrganizerFetcher(ItemFetcher):

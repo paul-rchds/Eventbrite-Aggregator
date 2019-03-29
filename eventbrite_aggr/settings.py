@@ -100,7 +100,7 @@ EB_BEARER = os.environ.get('EB_BEARER')
 
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': False,
+    'disable_existing_loggers': True,
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
@@ -111,11 +111,7 @@ LOGGING = {
             'handlers': ['console'],
             'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
         },
-        'sql': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-        }
-    },
+    }
 }
 
 # Password validation

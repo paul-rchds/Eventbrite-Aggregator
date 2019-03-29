@@ -1,6 +1,6 @@
 secrets.py
 assets
 .git
-.idea
+.idea/
 __pycache__
 *.pyc
