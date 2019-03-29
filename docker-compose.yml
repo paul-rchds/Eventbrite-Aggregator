@@ -10,9 +10,10 @@ services:
     environment:
       POSTGRES_PASSWORD: jfFEd84HWFj
       EB_BEARER: SAFEXY2AQJ4Y2DAHFG3A
+      DJANGO_LOG_LEVEL: INFO
       DEBUG: 'True'
     ports:
-      - "8003:8000"
+      - "8004:8000"
     depends_on:
       - postgres
 

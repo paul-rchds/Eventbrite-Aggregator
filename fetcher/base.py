@@ -15,6 +15,8 @@ class Fetcher:
     def make_request(cls, method, url, **kwargs):
         r = requests.request(method=method, url=url, headers=cls.headers, **kwargs) # TODO Catch some IO exceptions.
 
+        logger.warning(r.url)
+
         if r.status_code < 200 or r.status_code > 299:
             logger.error(r.text)
             raise APIError(r)

@@ -8,6 +8,9 @@ from rest_framework.response import Response
 from django.db.models import Count, Avg, F, ExpressionWrapper, FloatField, Max
 from decimal import Decimal
 import logging
+from utils.sql import execute_sql
+import calendar
+from itertools import groupby
 
 logger_sql = logging.getLogger('sql')
 
@@ -35,7 +38,7 @@ class OrganizerDetail(APIView):
 
     def get(self, request, uuid):
         organizer = self.get_object(uuid)
-        events = organizer.events.all()
+        events = organizer.events.order_by('created')
         first_event = EventSerializer(events.first())
         last_event = EventSerializer(events.last())
 
@@ -43,45 +46,104 @@ class OrganizerDetail(APIView):
             annotate(event_count=Count('events')).\
             values('event_count', 'name', 'uuid')
 
-        logger_sql.info(venue_count.query)
-
         data = {
             'first_event': first_event.data,
             'last_event': last_event.data,
             'total_events': events.count(),
             'venue_count': list(venue_count)
         }
-
         return Response(data)
 
 
 class StatsDetail(APIView):
 
+    @staticmethod
+    def avg_weekly_events_per_month_location():
+        sub_query = """
+                SELECT location.name, 
+                        location.id,
+                        DATE_TRUNC('week', event.start) AS week, 
+                        DATE_TRUNC('month', event.start) AS month, 
+                        COUNT(event.uuid) AS week_count 
+                FROM api_event event
+                INNER JOIN api_location location ON (event.location_id = location.id) 
+                GROUP BY location.name, week, month, location.id
+                """
+        main_query = """
+                SELECT month, name, ROUND(AVG("week_count"), 2) as weekly_avg
+                FROM (%s) AS sub_table
+                GROUP BY month, name
+                ORDER BY name
+                """ % (sub_query,)
+        return execute_sql(main_query)
+
+    @staticmethod
+    def most_popular_venue_per_category():
+        sub_query = """
+            SELECT category.uuid AS category_uuid, 
+                    category.name AS category_name, 
+                    venue.name AS venue_name, 
+                    venue.uuid AS venue_uuid, 
+                    COUNT(event.uuid) AS event_count,
+            ROW_NUMBER () OVER (
+            PARTITION BY category.uuid
+            ORDER BY
+            COUNT(event.uuid) DESC
+            ) AS rank_filter
+            FROM api_venue venue 
+            INNER JOIN api_event event ON (venue.uuid = event.venue_id) 
+            INNER JOIN api_category category ON (category.uuid = event.category_id) 
+            GROUP BY category_uuid, category_name, venue_name, venue_uuid
+            """
+        main_query = """
+                    SELECT * 
+                    FROM (%s) AS sub_table
+                    WHERE "rank_filter" = 1
+                    """ % (sub_query,)
+        return execute_sql(main_query)
+
+    @classmethod
+    def get_location_data(cls):
+        location_data = []
+        rows = cls.avg_weekly_events_per_month_location()
+
+        for key, group in groupby(rows, key=lambda x: x['name']):
+            dict_ = {
+                "location": key,
+                "months": {},
+            }
+            for item in group:
+                dict_['months'][item['month'].strftime("%B")] = float(item['weekly_avg'])
+
+            location_data.append(dict_)
+
+        return location_data
+
+    @classmethod
+    def get_popular_category_data(cls):
+        category_data = []
+        rows = cls.most_popular_venue_per_category()
+
+        for row in rows:
+            dict_ = {
+                'category': {
+                    'uuid': row['category_uuid'], # Field name changed from the spec.
+                    'name': row['category_name'],
+                },
+                'venue': {
+                    'uuid': row['venue_uuid'],
+                    'name': row['venue_name'],
+                    'event_count': row['event_count'], # Just adding event count here even though its not in the spec.
+                }
+
+            }
+            category_data.append(dict_)
+
+        return category_data
+
     def get(self, request):
-
-        # FIXME This is far from elegant. Maybe raw sql would be better.
-        events = Event.objects.\
-            values('location__name', 'start__month').\
-            annotate(month_count=ExpressionWrapper(
-            Count('uuid')*Decimal('1.0')/4,
-            output_field=FloatField()
-        ))
-
-        # logger_sql.info(events.query)
-
-        # for event in events:
-        #     print(event)
-
-        # categories = Category.objects.annotate(venue_count=Count('events__venue'))
-        # venues = Venue.objects.values('events__category').annotate(num_events=Count('events')).annotate(max_events=Max('num_events'))
-
-        venues = Venue.objects.raw('select ')
-
-        print(venues)
-        print(venues.query)
-
-        for venue in venues:
-            print(venue)
-
-        data = {}
+        data = {
+            'avg_weekly_events_per_month_location': self.get_location_data(),
+            'most_popular_venue_per_category': self.get_popular_category_data(),
+        }
         return Response(data)
