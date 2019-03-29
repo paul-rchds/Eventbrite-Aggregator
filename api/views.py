@@ -1,16 +1,14 @@
+import logging
+from itertools import groupby
+from django.db.models import Count
+from django.http import Http404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
-from rest_framework.views import APIView
-from api.models import Event, Organizer, Venue, Category
-from api.serializers import EventSerializer
-from django.http import Http404
 from rest_framework.response import Response
-from django.db.models import Count, Avg, F, ExpressionWrapper, FloatField, Max
-from decimal import Decimal
-import logging
+from rest_framework.views import APIView
+from api.models import Event, Organizer, Venue
+from api.serializers import EventSerializer
 from utils.sql import execute_sql
-import calendar
-from itertools import groupby
 
 logger_sql = logging.getLogger('sql')
 

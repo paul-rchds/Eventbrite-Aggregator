@@ -13,7 +13,7 @@ services:
       DJANGO_LOG_LEVEL: INFO
       DEBUG: 'True'
     ports:
-      - "8004:8000"
+      - "8001:8000"
     depends_on:
       - postgres
 
