@@ -11,6 +11,7 @@ switched off when debug mode is turned off.
 * For most_popular_venue_per_category a lot of categories the the most popular
 venue would tie for first place with just 1 event. I use ROW_NUMBER() to get the first
 venue. The other option would be to use Rank() and make venue a list in the output.
+* first_event and last_event are based on created date.
 
 ## Environmental Variables
 * EB_BEARER - This is my api key for Eventbrite. For convenience I have left this in the repo.
@@ -30,7 +31,7 @@ Browse to http://127.0.0.1:8001/events/
 ## Endpoints
 * http://127.0.0.1:8001/events/
     * parameter field name are a bit different from the spec:
-        * start_date
+        * start
         * venue__uuid # Note the double underscore.
         * category__uuid
 * http://127.0.0.1:8001/events/<event_id>/
