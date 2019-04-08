@@ -13,6 +13,12 @@ venue would tie for first place with just 1 event. I use ROW_NUMBER() to get the
 venue. The other option would be to use Rank() and make venue a list in the output.
 * first_event and last_event are based on created date.
 
+TODOs:
+* Add tests.
+* Use use atomic transaction when db is updated.
+* Catch APIError in cron_script
+* Add an abstract model called EventAttribute
+
 ## Environmental Variables
 * EB_BEARER - This is my api key for Eventbrite. For convenience I have left this in the repo.
 * DEBUG - If equal to 'True', the server will be in debug mode. 
