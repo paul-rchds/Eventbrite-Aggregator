@@ -8,8 +8,8 @@ services:
     volumes:
       - .:/code
     environment:
-      POSTGRES_PASSWORD: jfFEd84HWFj
-      EB_BEARER: SAFEXY2AQJ4Y2DAHFG3A
+      POSTGRES_PASSWORD: jfFEd8fdgFj
+      EB_BEARER: VSUENOJGFEOWPJFSGRSE
       DJANGO_LOG_LEVEL: INFO
       DEBUG: 'True'
     ports:
@@ -19,7 +19,7 @@ services:
 
   postgres:
     environment:
-      POSTGRES_PASSWORD: jfFEd84HWFj
+      POSTGRES_PASSWORD: jfFEd8fdgFj
     image: postgres:latest
     volumes:
       - pg_data:/var/lib/postgresql/data

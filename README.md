@@ -8,19 +8,9 @@ which pulls data from the eventbrite API, this can take a few minutes to run.
 * Django Rest Framework is used for the API endpoints. It provides an "explorable" WebUI when the 
 endpoints are accessed from a browser which is useful for testing. This UI is 
 switched off when debug mode is turned off.
-* For most_popular_venue_per_category a lot of categories the the most popular
-venue would tie for first place with just 1 event. I use ROW_NUMBER() to get the first
-venue. The other option would be to use Rank() and make venue a list in the output.
-* first_event and last_event are based on created date.
-
-TODOs:
-* Add tests.
-* Use use atomic transaction when db is updated.
-* Catch APIError in cron_script
-* Add an abstract model called EventAttribute
 
 ## Environmental Variables
-* EB_BEARER - This is my api key for Eventbrite. For convenience I have left this in the repo.
+* EB_BEARER - This is your Eventbrite API key.
 * DEBUG - If equal to 'True', the server will be in debug mode. 
 * DJANGO_LOG_LEVEL - Set to INFO by default.
 
@@ -28,7 +18,7 @@ Environmental Variables can be changed from the docker-compose.yml file.
 
 ## Setup
 ```
-git clone git@github.com:paul-rchds/flexclub_test.git
+git clone git@github.com:paul-rchds/Eventbrite-Aggregator.git
 docker-compose up --build
 
 Browse to http://127.0.0.1:8001/events/
@@ -44,3 +34,8 @@ Browse to http://127.0.0.1:8001/events/
 * http://127.0.0.1:8001/organizers/details/<organizer_id>
 * http://127.0.0.1:8001/stats/
 
+## TODOs:
+* Celery container to schedule the cron script
+* Add tests.
+* Catch APIError in cron_script
+* Add an abstract model called EventAttribute
